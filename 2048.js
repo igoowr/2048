@@ -65,15 +65,24 @@ function adicionarDois(){
             let peca = document.getElementById(l.toString() + "-" +c.toString());
             peca.innerText = "2";
             peca.classList.add("x2");
+
+            peca.classList.add("nova");
+            setTimeout(() => {
+                peca.classList.remove("nova");
+            }, 200);
+            
             found = true;
         }
     }
 }
 
-function atualizarPeca(peca, num) {
+function atualizarPeca(peca, num, animarMerge = false){
+    let textoAnterior = peca.innerText;
+    
     peca.innerText = "";
     peca.classList.value = ""; //limpar a classList
     peca.classList.add("peca");
+
     if (num > 0) {
         peca.innerText = num;
         if (num <= 4096) {
@@ -81,23 +90,38 @@ function atualizarPeca(peca, num) {
         } else {
             peca.classList.add("x8192");
         }
+
+        //ANIMAÇÃO MERGE
+        if (animarMerge && num > parseInt(textoAnterior || 0)) {
+            peca.classList.add("merge");
+            setTimeout(() => {
+                peca.classList.remove("merge");
+            }, 200);
+        }        
     }
 }
 
 document.addEventListener("keyup", (e) => {
+    //SALVAR GRID ANTES DE QUALQUER MOVIMENTO
+    let gridAnterior = copiarGrid(tabuleiro);
+
     if (e.code == "ArrowLeft") {
         moverEsquerda();
-        adicionarDois();
     } else if (e.code == "ArrowRight"){
         moverDireita();
-        adicionarDois();
     } else if (e. code == "ArrowUp"){
         moverCima();
-        adicionarDois();
     } else if (e.code == "ArrowDown"){
         moverBaixo();
+    } else {
+        return;
+    }
+
+    //COMPARAR O GRID ANTES E DEPOIS DO MOVIMENTO E ADICIONAR O 2
+    if (validarMovimento(gridAnterior, tabuleiro)){
         adicionarDois();
     }
+
     document.getElementById("score").innerText = score;
 })
 
@@ -138,7 +162,7 @@ function moverEsquerda() {
         for (let c = 0; c < colunas; c++){
             let peca = document.getElementById(l.toString() + "-" + c.toString());
             let num = tabuleiro[l][c];
-            atualizarPeca(peca, num);
+            atualizarPeca(peca, num, true);
         }
     }
 }
@@ -196,3 +220,49 @@ function moverBaixo() {
         
     }
 }
+
+function validarMovimento(gridAnterior, gridAtual){
+    for (let i = 0; i < 4; i++){
+        for (let j = 0; j < 4; j++){
+            if (gridAnterior[i][j] !== gridAtual[i][j]){
+                return true; //houve mudança = movimento válido
+            }
+        }
+    }
+    return false; //não houve mudança = movimento inválido
+}
+
+function copiarGrid(grid){ // copia o grid (necessária pra fazer a comparação e validar o movimento)
+    let novoGrid = [];
+    for (let i = 0; i < 4; i++){
+        novoGrid[i] = grid[i].slice(); //copia cada linha
+    }
+    return novoGrid;
+}
+
+// toggle do tema
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleTema = document.getElementById('toggleTema');
+    const body = document.body;
+    
+    // Verifica se já tem preferência salva
+    const temaSalvo = localStorage.getItem('tema2048');
+    if (temaSalvo === 'dark') {
+        body.setAttribute('data-tema', 'dark');
+        toggleTema.textContent = '☀️';
+    }
+    
+    toggleTema.addEventListener('click', function() {
+        if (body.getAttribute('data-tema') === 'dark') {
+            // muda pro tema claro
+            body.removeAttribute('data-tema');
+            toggleTema.textContent = '🌙';
+            localStorage.setItem('tema2048', 'claro');
+        } else {
+            // muda pro tema escuro
+            body.setAttribute('data-tema', 'dark');
+            toggleTema.textContent = '☀️';
+            localStorage.setItem('tema2048', 'dark');
+        }
+    });
+});

@@ -1,99 +1,128 @@
+:root {
+    --cor-fundo: #faf8ef;
+    --cor-texto: #776e65;
+    --cor-tabuleiro: #bbada0;
+    --cor-peca-vazia: #cdc1b4;
+    --cor-botao: #8f7a66;
+    --cor-botao-texto: #f9f6f2;
+}
+
+[data-tema="dark"] {
+    --cor-fundo: #1a1a1a;
+    --cor-texto: #e0e0e0;
+    --cor-tabuleiro: #2d2d2d;
+    --cor-peca-vazia: #3d3d3d;
+    --cor-botao: #555555;
+    --cor-botao-texto: #ffffff;
+}
+
 body{
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
-}
-
-hr{
-    width: 500px;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 #tabuleiro{
     width: 400px;
     height: 400px;
-
-    background-color: #cdc1b5;
-    border: 6px solid #bbada0;
-
+    background-color: var(--cor-tabuleiro);
+    border: 6px solid var(--cor-tabuleiro);
+    border-radius: 6px;
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
+    transition: all 0.3s;
 }
 
 .peca{
     width: 90px;
     height: 90px;
-    border: 5px solid #bbada0;
-
+    border: 5px solid var(--cor-tabuleiro);
+    background-color: var(--cor-peca-vazia);
+    border-radius: 10px;
     font-size: 40px;
     font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s;
+}
+
+#toggleTema{
+    background-color: var(--cor-botao);
+    color: var(--cor-botao-texto);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+#toggleTema:hover {
+    opacity: 0.8;
 }
 
 /* cores das peças */
+.x2 { background-color: #eee4da; color: #776e65; }
+.x4 { background-color: #ede0c8; color: #776e65; }
+.x8 { background-color: #f2b179; color: #f9f6f2; }
+.x16 { background-color: #f59563; color: #f9f6f2; }
+.x32 { background-color: #f67c5f; color: #f9f6f2; }
+.x64 { background-color: #f65e3b; color: #f9f6f2; }
+.x128 { background-color: #edcf72; color: #f9f6f2; }
+.x256 { background-color: #edcc61; color: #f9f6f2; }
+.x512 { background-color: #edc850; color: #f9f6f2; }
+.x1024 { background-color: #edc53f; color: #f9f6f2; }
+.x2048 { background-color: #edc22e; color: #f9f6f2; }
+.x8192 { background-color: #3c3a32; color: #f9f6f2; }
 
-.x2{
-    background-color: #eee4da;
-    color: #726371;
+[data-tema="dark"] .x2 { background-color: #cfc8c1; color: #3a3a3a; }
+[data-tema="dark"] .x4 { background-color: #e0d4bc; color: #3a3a3a; }
+[data-tema="dark"] .x8 { background-color: #f0a25d; color: #ffffff; }
+[data-tema="dark"] .x16 { background-color: #f18449; color: #ffffff; }
+[data-tema="dark"] .x32 { background-color: #f36440; color: #ffffff; }
+[data-tema="dark"] .x64 { background-color: #f13409; color: #ffffff; }
+[data-tema="dark"] .x128 { background-color: #ebc658; color: #ffffff; }
+[data-tema="dark"] .x256 { background-color: #ebc54b; color: #ffffff; }
+[data-tema="dark"] .x512 { background-color: #eec335; color: #ffffff; }
+[data-tema="dark"] .x1024 { background-color: #ebbd26; color: #ffffff; }
+[data-tema="dark"] .x2048 { background-color: #ffc400; color: #ffffff; }
+[data-tema="dark"] .x8192 { background-color: #000000; color: #ffffff; }
+
+/* animação aparecimento da peça */
+@keyframes aparecer {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
-.x4{
-    background-color: #ede0c8;
-    color: #726371;
+.peca.nova {
+    animation: aparecer 0.2s ease-out;
 }
 
-.x8{
-    background-color: #f4b17a;
-    color: #f9f6f2;
+/* animação movimento da peça */
+@keyframes deslizar {
+    0% { transform: translate(var(--x-inicio), var(--y-inicio)); }
+    100% { transform: translate(0, 2); }
 }
 
-.x16{
-    background-color: #f59575;
-    color: white;
+.peca.movendo {
+    animation: deslizar 0.15s ease-out;
+    z-index: 10;
 }
 
-.x32{
-    background-color: #f57c5f;
-    color: white;
+/* animação de junção de peças*/
+@keyframes merge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }
 
-.x64{
-    background-color: #f65d3b;
-    color: white;
-}
-
-.x128{
-    background-color: #edce71;
-    color: white;
-}
-
-.x256{
-    background-color: #edcc63;
-    color: white;
-}
-
-.x512{
-    background-color: #edc651;
-    color: white;
-}
-
-.x1024{
-    background-color: #eec744;
-    color: white;
-}
-
-.x2048{
-    background-color: #ecc230;
-    color: white;
-}
-
-.x4096 {
-    background-color: #fe3d3d;
-    color: white;
-}
-
-.x8192 {
-    background-color: #ff2020;
-    color: white;
+.peca.merge {
+    animation: merge 0.2s ease-in-out;
 }
