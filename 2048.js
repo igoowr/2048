@@ -178,7 +178,7 @@ function moverDireita() {
         for (let c = 0; c < colunas; c++){
             let peca = document.getElementById(l.toString() + "-" + c.toString());
             let num = tabuleiro[l][c];
-            atualizarPeca(peca, num);
+            atualizarPeca(peca, num, true);
         }
     }
 }
@@ -195,7 +195,7 @@ function moverCima() {
             tabuleiro[l][c] = linha[l];
             let peca = document.getElementById(l.toString() + "-" + c.toString());
             let num = tabuleiro[l][c];
-            atualizarPeca(peca, num);
+            atualizarPeca(peca, num, true);
         }
         
     }
@@ -215,7 +215,7 @@ function moverBaixo() {
             tabuleiro[l][c] = linha[l];
             let peca = document.getElementById(l.toString() + "-" + c.toString());
             let num = tabuleiro[l][c];
-            atualizarPeca(peca, num);
+            atualizarPeca(peca, num, true);
         }
         
     }
