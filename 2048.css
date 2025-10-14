@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Bartle&family=BBH+Sans+Hegarty&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 :root {
     --cor-fundo: #faf8ef;
     --cor-texto: #776e65;
-    --cor-tabuleiro: #bbada0;
-    --cor-peca-vazia: #cdc1b4;
+    --cor-sombra-texto: #1d1c1b13;
+    --cor-tabuleiro: #8d8175;
+    --cor-peca-vazia: #b1a598;
     --cor-botao: #8f7a66;
     --cor-botao-texto: #f9f6f2;
 }
@@ -10,6 +13,7 @@
 [data-tema="dark"] {
     --cor-fundo: #1a1a1a;
     --cor-texto: #e0e0e0;
+    --cor-sombra-texto: #1d1c1b21;
     --cor-tabuleiro: #2d2d2d;
     --cor-peca-vazia: #3d3d3d;
     --cor-botao: #555555;
@@ -17,7 +21,7 @@
 }
 
 body{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Rubik", sans-serif;
     text-align: center;
     background-color: var(--cor-fundo);
     color: var(--cor-texto);
@@ -26,52 +30,119 @@ body{
     transition: background-color 0.3s, color 0.3s;
 }
 
+h1{
+    font-family: "BBH Sans Hegarty", sans-serif;
+    font-size: 48px;
+}
+h2{
+    font-family: "Public Sans", sans-serif;
+    margin-bottom: 10px;
+    font-weight: 900;
+}
+
 #tabuleiro{
-    width: 400px;
-    height: 400px;
+    width: 470px;
+    height: 470px;
     background-color: var(--cor-tabuleiro);
-    border: 6px solid var(--cor-tabuleiro);
-    border-radius: 6px;
+    border: 10px solid var(--cor-tabuleiro);
+    border-radius: 16px;
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    transition: all 0.3s;
+    gap: 10px;
     position: relative;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .peca{
-    width: 90px;
-    height: 90px;
-    border: 5px solid var(--cor-tabuleiro);
+    flex: 1 1 calc(25% - 10px);
+    aspect-ratio: 1 / 1;
+    border: none;
     background-color: var(--cor-peca-vazia);
     border-radius: 10px;
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 48px;
+    font-weight: 900;
+    text-shadow: 0px 1px 5px var(--cor-sombra-texto);
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.15);
     display: flex;
     justify-content: center;
     align-items: center;
     transition: all 0.3s;
 }
 
-#toggleTema{
-    background-color: var(--cor-botao);
-    color: var(--cor-botao-texto);
+#toggleTema {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    padding: 0;  
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--cor-fundo);
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
     transition: all 0.3s;
 }
 
 #toggleTema:hover {
-    opacity: 0.8;
+    transform: scale(1.5);
 }
+
+#toggleTema .icone {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 26px;
+    height: 26px;
+    transform: translate(-50%, -50%) scale(0.92);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    opacity: 0;
+    pointer-events: none; /* evita capturar clique no próprio svg */
+    will-change: opacity, transform;
+    display: block;
+}
+
+/* estado padrão = tema claro -> mostra a lua */
+#toggleTema .icone-sol { 
+    -webkit-mask: url('icons/sol.svg') center / contain no-repeat;
+    mask: url('icons/sol.svg') center / contain no-repeat;
+    background-color: var(--cor-texto); /* cor do ícone */
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+    z-index: 1;
+}
+#toggleTema .icone-lua { 
+    -webkit-mask: url('icons/lua.svg') center / contain no-repeat;
+    mask: url('icons/lua.svg') center / contain no-repeat;
+    background-color: var(--cor-texto); /* cor do ícone */
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    z-index: 2;
+}
+
+/* no tema escuro o sol fica branco (usa a variável ou literal) */
+[data-tema="dark"] #toggleTema .icone-sol { 
+    background-color: #ffffff; 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1); 
+}
+[data-tema="dark"] #toggleTema .icone-lua { 
+    opacity: 0; 
+    z-index: 1;
+    transform: translate(-50%, -50%) scale(0.92);
+}
+
+/* no tema claro garante que fiquem pretos */
+body:not([data-tema="dark"]) #toggleTema .icone-sol { opacity: 0; }
+body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--cor-texto); opacity: 1; }
 
 /* cores das peças */
 .x2 { background-color: #eee4da; color: #776e65; }
 .x4 { background-color: #ede0c8; color: #776e65; }
-.x8 { background-color: #f2b179; color: #f9f6f2; }
+.x8 { background-color: #f5ae6f; color: #f9f6f2; }
 .x16 { background-color: #f59563; color: #f9f6f2; }
 .x32 { background-color: #f67c5f; color: #f9f6f2; }
 .x64 { background-color: #f65e3b; color: #f9f6f2; }
@@ -95,29 +166,34 @@ body{
 [data-tema="dark"] .x2048 { background-color: #ffc400; color: #ffffff; }
 [data-tema="dark"] .x8192 { background-color: #000000; color: #ffffff; }
 
-/* animação aparecimento da peça */
+/* brilho para peças ocupadas */
+.x2, .x4, .x8, .x16, .x32, .x64, .x128, .x256, .x512, .x1024, .x2048, .x8192 {
+    box-shadow: inset 0 1px 8px rgba(255, 255, 255, 0.137);
+}
+.x512, .x1024, .x2048, .x8192 {
+    box-shadow: inset 0 1px 11px rgba(255, 255, 255, 0.5);
+}
+
+/* peças ocupadas maiores que vazias */
+.x2, .x4, .x8, .x16, .x32, .x64, .x128, .x256, .x512, .x1024, .x2048, .x8192 {
+    transform: scale(1.01);
+    z-index: 2;
+}
+
+
+/* animação - aparecimento da peça */
 @keyframes aparecer {
     0% { transform: scale(0); }
-    70% { transform: scale(1.1); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
 .peca.nova {
-    animation: aparecer 0.2s ease-out;
+    animation: aparecer 0.5s ease-in-out;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* animação movimento da peça */
-@keyframes deslizar {
-    0% { transform: translate(var(--x-inicio), var(--y-inicio)); }
-    100% { transform: translate(0, 2); }
-}
-
-.peca.movendo {
-    animation: deslizar 0.15s ease-out;
-    z-index: 10;
-}
-
-/* animação de junção de peças*/
+/* animação - junção de peças*/
 @keyframes merge {
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
@@ -125,5 +201,6 @@ body{
 }
 
 .peca.merge {
-    animation: merge 0.2s ease-in-out;
+    animation: merge 0.25s ease-in-out;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 }

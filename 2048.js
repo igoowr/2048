@@ -61,15 +61,18 @@ function adicionarDois(){
         let c = Math.floor(Math.random() * colunas);
     
         if (tabuleiro[l][c] == 0){
-            tabuleiro[l][c] = 2;
+            // 90% chance de gerar 2, 10% chance de gerar 4
+            let valor = Math.random() < 0.9 ? 2 : 4;
+            tabuleiro[l][c] = valor;
+            
             let peca = document.getElementById(l.toString() + "-" +c.toString());
-            peca.innerText = "2";
-            peca.classList.add("x2");
+            peca.innerText = valor;
+            peca.classList.add("x" + valor);
 
             peca.classList.add("nova");
             setTimeout(() => {
                 peca.classList.remove("nova");
-            }, 200);
+            }, 500);
             
             found = true;
         }
@@ -85,10 +88,19 @@ function atualizarPeca(peca, num, animarMerge = false){
 
     if (num > 0) {
         peca.innerText = num;
-        if (num <= 4096) {
+        if (num <= 4096) { // definir cor da peça
             peca.classList.add("x" + num.toString());
         } else {
             peca.classList.add("x8192");
+        }
+
+        // ajustar tamanho da fonte
+        if (num < 100) {
+            peca.style.fontSize = "48px";
+        } else if (num < 1000) {
+            peca.style.fontSize = "40px";
+        } else {
+            peca.style.fontSize = "35px";
         }
 
         //ANIMAÇÃO MERGE
@@ -97,6 +109,8 @@ function atualizarPeca(peca, num, animarMerge = false){
             setTimeout(() => {
                 peca.classList.remove("merge");
             }, 200);
+        }   else {
+            peca.style.fontSize = "42px"; // se a peça estiver vazia, volta ao tamanho padrao
         }        
     }
 }
@@ -244,24 +258,21 @@ function copiarGrid(grid){ // copia o grid (necessária pra fazer a comparação
 document.addEventListener('DOMContentLoaded', function() {
     const toggleTema = document.getElementById('toggleTema');
     const body = document.body;
-    
-    // Verifica se já tem preferência salva
+
+    // Ler preferência salva
     const temaSalvo = localStorage.getItem('tema2048');
     if (temaSalvo === 'dark') {
         body.setAttribute('data-tema', 'dark');
-        toggleTema.textContent = '☀️';
+    } else {
+        body.removeAttribute('data-tema');
     }
-    
+
     toggleTema.addEventListener('click', function() {
         if (body.getAttribute('data-tema') === 'dark') {
-            // muda pro tema claro
             body.removeAttribute('data-tema');
-            toggleTema.textContent = '🌙';
             localStorage.setItem('tema2048', 'claro');
         } else {
-            // muda pro tema escuro
             body.setAttribute('data-tema', 'dark');
-            toggleTema.textContent = '☀️';
             localStorage.setItem('tema2048', 'dark');
         }
     });
