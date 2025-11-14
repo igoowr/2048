@@ -3,6 +3,9 @@ var tabuleiro;
 var score = 0;
 var linhas = 4;
 var colunas = 4;
+var historico = [];
+var historicoScore = [];
+
 
 window.onload = function() {
     iniciarJogo();
@@ -119,11 +122,14 @@ document.addEventListener("keyup", (e) => {
     //SALVAR GRID ANTES DE QUALQUER MOVIMENTO
     let gridAnterior = copiarGrid(tabuleiro);
 
+    historico.push(copiarGrid(tabuleiro));
+    historicoScore.push(score);
+
     if (e.code == "ArrowLeft") {
         moverEsquerda();
     } else if (e.code == "ArrowRight"){
         moverDireita();
-    } else if (e. code == "ArrowUp"){
+    } else if (e.code == "ArrowUp"){
         moverCima();
     } else if (e.code == "ArrowDown"){
         moverBaixo();
@@ -277,3 +283,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function refazerMovimento() {
+    if (historico.length === 0) {
+        return; // nada pra refazer
+    }
+
+    // pegar o último estado salvo
+    tabuleiro = historico.pop();
+    score = historicoScore.pop();
+
+    // atualizar a tela
+    for (let l = 0; l < linhas; l++) {
+        for (let c = 0; c < colunas; c++) {
+            let peca = document.getElementById(l.toString() + "-" + c.toString());
+            atualizarPeca(peca, tabuleiro[l][c]);
+        }
+    }
+
+    document.getElementById("score").innerText = score;
+}
+document.getElementById("redoBtn").addEventListener("click", refazerMovimento);
+

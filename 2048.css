@@ -32,12 +32,30 @@ body{
 
 h1{
     font-family: "BBH Sans Hegarty", sans-serif;
-    font-size: 48px;
+    font-size: 5vw;
+    text-shadow: 2px 2px 0px var(--cor-sombra-texto);
+    margin: 10px;
 }
 h2{
     font-family: "Public Sans", sans-serif;
-    margin-bottom: 10px;
+    font-weight: 200;
+}
+#score{
+    font-family: "Rubik", sans-serif;
     font-weight: 900;
+}
+
+.icons {
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+.divisor{
+    width: 2px;
+    height: 24px;
+    background-color: var(--cor-texto);
 }
 
 #tabuleiro{
@@ -138,6 +156,35 @@ h2{
 /* no tema claro garante que fiquem pretos */
 body:not([data-tema="dark"]) #toggleTema .icone-sol { opacity: 0; }
 body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--cor-texto); opacity: 1; }
+
+#redoBtn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    background: var(--cor-fundo);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+#redoBtn:hover {
+    transform: scale(1.5);
+}
+#redoBtn .icone-redo {
+    width: 26px;
+    height: 26px;
+    display: block;
+
+    -webkit-mask: url('icons/redo.svg') center / contain no-repeat;
+    mask: url('icons/redo.svg') center / contain no-repeat;
+
+    background-color: var(--cor-texto);
+    transition: background-color 0.3s;
+}
+[data-tema="dark"] #redoBtn .icone-redo {background-color: #ffffff;}
+
 
 /* cores das peças */
 .x2 { background-color: #eee4da; color: #776e65; }
