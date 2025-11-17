@@ -20,7 +20,7 @@
     --cor-botao-texto: #ffffff;
 }
 
-body{
+body {
     font-family: "Rubik", sans-serif;
     text-align: center;
     background-color: var(--cor-fundo);
@@ -30,50 +30,69 @@ body{
     transition: background-color 0.3s, color 0.3s;
 }
 
-h1{
+h1 {
     font-family: "BBH Sans Hegarty", sans-serif;
     font-size: 5vw;
     text-shadow: 2px 2px 0px var(--cor-sombra-texto);
     margin: 10px;
 }
-h2{
+
+h2 {
     font-family: "Public Sans", sans-serif;
     font-weight: 200;
 }
-#score{
+
+#game-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 24px;
+}
+
+#board-wrapper {
+    display: flex;
+    position: relative;
+    align-items: flex-start;
+    justify-content: center;
+    width: fit-content;
+    margin: 0;
+}
+
+#scoreBox {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 14px);
+    background: var(--cor-botao);
+    color: var(--cor-botao-texto);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    border: 2px solid rgba(0,0,0,0.12);
+    white-space: nowrap;
+}
+
+#score {
     font-family: "Rubik", sans-serif;
     font-weight: 900;
 }
 
-.icons {
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-}
-.divisor{
-    width: 2px;
-    height: 24px;
-    background-color: var(--cor-texto);
-}
-
-#tabuleiro{
+#tabuleiro {
     width: 470px;
     height: 470px;
     background-color: var(--cor-tabuleiro);
     border: 10px solid var(--cor-tabuleiro);
     border-radius: 16px;
-    margin: 0 auto;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     position: relative;
-    transition: all 0.3s;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
 }
 
-.peca{
+.peca {
     flex: 1 1 calc(25% - 10px);
     aspect-ratio: 1 / 1;
     border: none;
@@ -89,11 +108,26 @@ h2{
     transition: all 0.3s;
 }
 
+/* Ícones, botões e temas */
+.icons {
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.divisor {
+    width: 2px;
+    height: 24px;
+    background-color: var(--cor-texto);
+}
+
 #toggleTema {
     position: relative;
     width: 48px;
     height: 48px;
-    padding: 0;  
+    padding: 0;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
@@ -118,44 +152,36 @@ h2{
     transform: translate(-50%, -50%) scale(0.92);
     transition: opacity 0.28s ease, transform 0.28s ease;
     opacity: 0;
-    pointer-events: none; /* evita capturar clique no próprio svg */
-    will-change: opacity, transform;
+    pointer-events: none;
     display: block;
 }
 
-/* estado padrão = tema claro -> mostra a lua */
-#toggleTema .icone-sol { 
+#toggleTema .icone-sol {
     -webkit-mask: url('icons/sol.svg') center / contain no-repeat;
     mask: url('icons/sol.svg') center / contain no-repeat;
-    background-color: var(--cor-texto); /* cor do ícone */
+    background-color: var(--cor-texto);
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.92);
     z-index: 1;
 }
-#toggleTema .icone-lua { 
+
+#toggleTema .icone-lua {
     -webkit-mask: url('icons/lua.svg') center / contain no-repeat;
     mask: url('icons/lua.svg') center / contain no-repeat;
-    background-color: var(--cor-texto); /* cor do ícone */
+    background-color: var(--cor-texto);
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
     z-index: 2;
 }
 
-/* no tema escuro o sol fica branco (usa a variável ou literal) */
-[data-tema="dark"] #toggleTema .icone-sol { 
-    background-color: #ffffff; 
-    opacity: 1; 
-    transform: translate(-50%, -50%) scale(1); 
-}
-[data-tema="dark"] #toggleTema .icone-lua { 
-    opacity: 0; 
-    z-index: 1;
-    transform: translate(-50%, -50%) scale(0.92);
+[data-tema="dark"] #toggleTema .icone-sol {
+    background-color: #ffffff;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
 }
 
-/* no tema claro garante que fiquem pretos */
-body:not([data-tema="dark"]) #toggleTema .icone-sol { opacity: 0; }
-body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--cor-texto); opacity: 1; }
+[data-tema="dark"] #toggleTema .icone-lua {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+}
 
 #redoBtn {
     width: 48px;
@@ -167,26 +193,26 @@ body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--co
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: transform 0.3s;
 }
+
 #redoBtn:hover {
     transform: scale(1.5);
 }
+
 #redoBtn .icone-redo {
     width: 26px;
     height: 26px;
-    display: block;
-
     -webkit-mask: url('icons/redo.svg') center / contain no-repeat;
     mask: url('icons/redo.svg') center / contain no-repeat;
-
     background-color: var(--cor-texto);
-    transition: background-color 0.3s;
 }
-[data-tema="dark"] #redoBtn .icone-redo {background-color: #ffffff;}
 
+[data-tema="dark"] #redoBtn .icone-redo {
+    background-color: #ffffff;
+}
 
-/* cores das peças */
+/* Cores das peças */
 .x2 { background-color: #eee4da; color: #776e65; }
 .x4 { background-color: #ede0c8; color: #776e65; }
 .x8 { background-color: #f5ae6f; color: #f9f6f2; }
@@ -213,22 +239,6 @@ body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--co
 [data-tema="dark"] .x2048 { background-color: #ffc400; color: #ffffff; }
 [data-tema="dark"] .x8192 { background-color: #000000; color: #ffffff; }
 
-/* brilho para peças ocupadas */
-.x2, .x4, .x8, .x16, .x32, .x64, .x128, .x256, .x512, .x1024, .x2048, .x8192 {
-    box-shadow: inset 0 1px 8px rgba(255, 255, 255, 0.137);
-}
-.x512, .x1024, .x2048, .x8192 {
-    box-shadow: inset 0 1px 11px rgba(255, 255, 255, 0.5);
-}
-
-/* peças ocupadas maiores que vazias */
-.x2, .x4, .x8, .x16, .x32, .x64, .x128, .x256, .x512, .x1024, .x2048, .x8192 {
-    transform: scale(1.01);
-    z-index: 2;
-}
-
-
-/* animação - aparecimento da peça */
 @keyframes aparecer {
     0% { transform: scale(0); }
     50% { transform: scale(1.1); }
@@ -237,10 +247,8 @@ body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--co
 
 .peca.nova {
     animation: aparecer 0.5s ease-in-out;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* animação - junção de peças*/
 @keyframes merge {
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
@@ -249,5 +257,15 @@ body:not([data-tema="dark"]) #toggleTema .icone-lua { background-color: var(--co
 
 .peca.merge {
     animation: merge 0.25s ease-in-out;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 600px) {
+    #board-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    #scoreBox {
+        position: static;
+        margin-top: 12px;
+    }
 }

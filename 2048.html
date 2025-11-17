@@ -14,24 +14,22 @@
             <span class="icone-redo"></span>
         </button>
 
-    <div class="divisor"></div>
+        <div class="divisor"></div>
 
         <button id="toggleTema" aria-label="Alternar tema">
             <span class="icone icone-sol"></span>
             <span class="icone icone-lua"></span>
         </button>
-    
     </div>
 
+    <!-- container central que mantém o tabuleiro centrado e permite posicionar a pontuação -->
+    <div id="game-container">
+        <div id="board-wrapper">
+            <div id="tabuleiro"></div>
+            <div id="scoreBox">pontuação: <span id="score">0</span></div>
+        </div>
+    </div>
 
-
-
-    <h2>pontuação: <span id="score">0</span></h2>
-
-
-
-    <div id="tabuleiro"></div>
-    
     <script src="2048.js"></script>
 </body>
 </html>
