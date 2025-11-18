@@ -20,15 +20,20 @@
             <span class="icone icone-sol"></span>
             <span class="icone icone-lua"></span>
         </button>
+
+        <div class="divisor"></div>
+
+        <button id="resetBtn" aria-label="Resetar">
+            <span class="icone-reset"></span>
+        </button>
+        
     </div>
 
-    <!-- container central que mantém o tabuleiro centrado e permite posicionar a pontuação -->
-    <div id="game-container">
+    <div id="scoreBox">score <br><span id="score">0</span></div>
+
         <div id="board-wrapper">
             <div id="tabuleiro"></div>
-            <div id="scoreBox">pontuação: <span id="score">0</span></div>
         </div>
-    </div>
 
     <script src="2048.js"></script>
 </body>

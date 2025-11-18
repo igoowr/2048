@@ -42,39 +42,39 @@ h2 {
     font-weight: 200;
 }
 
-#game-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-top: 24px;
-}
-
 #board-wrapper {
     display: flex;
     position: relative;
-    align-items: flex-start;
     justify-content: center;
+    align-items: flex-start;
     width: fit-content;
-    margin: 0;
+    margin: 24px auto 0 auto;
 }
 
 #scoreBox {
-    position: absolute;
-    top: 0;
-    left: calc(100% + 14px);
-    background: var(--cor-botao);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--cor-tabuleiro);
     color: var(--cor-botao-texto);
-    padding: 10px 14px;
+
+    margin-top: 1%;
+    padding: 8px 14px;
     border-radius: 10px;
-    font-weight: 700;
+
+    min-width: 70px;
+    width: fit-content;
+    
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    border: 2px solid rgba(0,0,0,0.12);
-    white-space: nowrap;
+    transition: all 0.3s;
 }
 
 #score {
     font-family: "Rubik", sans-serif;
     font-weight: 900;
+    font-size: 24px;
 }
 
 #tabuleiro {
@@ -88,7 +88,7 @@ h2 {
     flex-wrap: wrap;
     gap: 10px;
     position: relative;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     transition: all 0.3s;
 }
 
@@ -105,7 +105,6 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.3s;
 }
 
 /* Ícones, botões e temas */
@@ -193,7 +192,7 @@ h2 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s;
+    transition: all 0.3s;
 }
 
 #redoBtn:hover {
@@ -209,6 +208,45 @@ h2 {
 }
 
 [data-tema="dark"] #redoBtn .icone-redo {
+    background-color: #ffffff;
+}
+
+@keyframes girarReset {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#resetBtn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    background: var(--cor-fundo);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+#resetBtn:hover {
+    transform: scale(1.5);
+}
+
+#resetBtn:hover .icone-reset {
+    animation: girarReset 1s cubic-bezier(.51,0,.01,1);
+}
+
+
+#resetBtn .icone-reset {
+    width: 26px;
+    height: 26px;
+    -webkit-mask: url('icons/reset.svg') center / contain no-repeat;
+    mask: url('icons/reset.svg') center / contain no-repeat;
+    background-color: var(--cor-texto);
+}
+
+[data-tema="dark"] #resetBtn .icone-reset {
     background-color: #ffffff;
 }
 
@@ -239,25 +277,6 @@ h2 {
 [data-tema="dark"] .x2048 { background-color: #ffc400; color: #ffffff; }
 [data-tema="dark"] .x8192 { background-color: #000000; color: #ffffff; }
 
-@keyframes aparecer {
-    0% { transform: scale(0); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.peca.nova {
-    animation: aparecer 0.5s ease-in-out;
-}
-
-@keyframes merge {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-.peca.merge {
-    animation: merge 0.25s ease-in-out;
-}
 
 @media (max-width: 600px) {
     #board-wrapper {
@@ -269,3 +288,16 @@ h2 {
         margin-top: 12px;
     }
 }
+
+
+/* Animações */
+.peca-spawn {
+    animation: spawnAnim 600ms cubic-bezier(0.25, 0.7, 0.3, 1);
+}
+
+@keyframes spawnAnim {
+    0% { transform: scale(0.3); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
