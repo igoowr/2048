@@ -49,6 +49,7 @@ h2 {
     align-items: flex-start;
     width: fit-content;
     margin: 24px auto 0 auto;
+    transition: all 0.3s ease;
 }
 
 #scoreBox {
@@ -237,7 +238,6 @@ h2 {
     animation: girarReset 1s cubic-bezier(.51,0,.01,1);
 }
 
-
 #resetBtn .icone-reset {
     width: 26px;
     height: 26px;
@@ -248,6 +248,47 @@ h2 {
 
 [data-tema="dark"] #resetBtn .icone-reset {
     background-color: #ffffff;
+}
+
+#botaoSom {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    background: var(--cor-fundo);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    padding: 0;
+}
+
+#botaoSom:hover {
+    transform: scale(1.5);
+}
+
+/* ícone de som — usando mask igual aos outros ícones */
+#iconeSom {
+    width: 26px;
+    height: 26px;
+    display: block;
+    pointer-events: none;
+
+    -webkit-mask: url('icons/somon.svg') center / contain no-repeat;
+    mask: url('icons/somon.svg') center / contain no-repeat;
+
+    background-color: var(--cor-texto);
+    transition: background-color 0.3s, transform 0.18s;
+}
+
+[data-tema="dark"] #iconeSom {
+    background-color: #ffffff;
+}
+
+.som-desligado {
+    -webkit-mask: url('icons/somoff.svg') center / contain no-repeat !important;
+    mask: url('icons/somoff.svg') center / contain no-repeat !important;
 }
 
 /* Cores das peças */
@@ -277,11 +318,128 @@ h2 {
 [data-tema="dark"] .x2048 { background-color: #ffc400; color: #ffffff; }
 [data-tema="dark"] .x8192 { background-color: #000000; color: #ffffff; }
 
+#gameOverModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(3px);
+
+    display: none; /* escondido */
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+
+#gameOverBox {
+    background: var(--cor-tabuleiro);
+    color: var(--cor-botao-texto);
+    padding: 30px 40px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    text-align: center;
+    animation: popupShow 0.4s ease-out;
+}
+
+#gameOverBox h2 {
+    font-family: "BBH Sans Hegarty", sans-serif;
+    color: var(--cor-texto);
+    text-shadow: 2px 2px 0px var(--cor-fundo);
+    margin: 0 0 20px;
+    font-size: 32px;
+    font-weight: 900;
+}
+#gameOverScore {
+    font-size: 22px;
+    font-weight: 200;
+    margin-bottom: 20px;
+    color: var(--cor-botao-texto);
+}
+
+#btnNovoJogo {
+    padding: 10px 22px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    background: var(--cor-botao);
+    color: var(--cor-botao-texto);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    font-family: "Rubik", sans-serif;
+}
+
+#btnNovoJogo:hover {
+    transform: scale(1.05);
+}
+
+@keyframes popupShow {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+#btnNovoJogo {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #b49579;
+    color: white;
+    transition: 0.15s;
+}
+
+#btnNovoJogo:hover {
+    background: #a5856a;
+}
+
+/* Tema escuro */
+body[data-tema="dark"] #btnNovoJogo {
+    background: #222;
+    color: #eee;
+}
+
+body[data-tema="dark"] #btnNovoJogo:hover {
+    background: #333;
+}
+
+.hidden {
+    display: none;
+}
+
+/* animações */
+.peca-spawn-pop {
+    animation: spawnPop 250ms ease-out;
+}
+
+@keyframes spawnPop {
+    0% {
+        transform: scale(0.3);
+        filter: brightness(2);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.05);
+        filter: brightness(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
 
 @media (max-width: 600px) {
     #board-wrapper {
         flex-direction: column;
         align-items: center;
+        transform: scale(0.8);
     }
     #scoreBox {
         position: static;
@@ -289,15 +447,4 @@ h2 {
     }
 }
 
-
-/* Animações */
-.peca-spawn {
-    animation: spawnAnim 600ms cubic-bezier(0.25, 0.7, 0.3, 1);
-}
-
-@keyframes spawnAnim {
-    0% { transform: scale(0.3); opacity: 0; }
-    60% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(1); }
-}
 

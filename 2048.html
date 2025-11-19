@@ -27,6 +27,13 @@
             <span class="icone-reset"></span>
         </button>
         
+        <div class="divisor"></div>
+
+        <button id="botaoSom" aria-label="Alternar som" title="Som">
+            <span id="iconeSom" class="icone"></span>
+        </button>
+
+
     </div>
 
     <div id="scoreBox">score <br><span id="score">0</span></div>
@@ -34,6 +41,16 @@
         <div id="board-wrapper">
             <div id="tabuleiro"></div>
         </div>
+
+        <div id="gameOverModal">
+            <div id="gameOverBox">
+                <h2>GAME OVER</h2>
+                <p id="gameOverScore"></p>
+                <button id="btnNovoJogo">Novo Jogo</button>
+            </div>
+        </div>
+
+
 
     <script src="2048.js"></script>
 </body>

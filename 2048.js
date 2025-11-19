@@ -1,3 +1,41 @@
+//sons
+
+const somSlide = new Audio("sons/swish.mp3");
+const somMerge = new Audio("sons/pop.mp3");
+
+somSlide.volume = 0.06;
+somMerge.volume = 0.1;
+
+// --- SISTEMA DE SOM (Web Audio API) ---
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let somPopBuffer = null;
+let somSlideBuffer = null;
+
+async function carregarSons() {
+    somPopBuffer = await carregarBuffer("sons/pop.mp3");
+    somSlideBuffer = await carregarBuffer("sons/swish.mp3");
+}
+
+function carregarBuffer(url) {
+    return fetch(url)
+        .then(res => res.arrayBuffer())
+        .then(buf => audioCtx.decodeAudioData(buf));
+}
+
+function tocarSom(buffer, detune = 0, volume = 1) {
+    if (!somAtivo) return;
+    if (!buffer) return;
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.detune.value = detune;
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = volume;
+
+    source.connect(gainNode).connect(audioCtx.destination);
+    source.start(0);
+}
 
 const ANIMACAO_MS = 160;
 const TAMANHO_PECA = 117;
@@ -8,11 +46,14 @@ var linhas = 4;
 var colunas = 4;
 var historico = [];
 var historicoScore = [];
+let bloqueado = false;
 
 var gameOver = false;
 
 window.onload = function() {
-    iniciarJogo();
+    carregarSons().then(() => {
+        iniciarJogo();
+    });
 }
 
 function iniciarJogo() {
@@ -76,11 +117,12 @@ function temMovimentoPossivel(){
     return false;
 }
 
-function mostrarGameOver(){
+function mostrarGameOver() {
     gameOver = true;
-    setTimeout(() => {
-        alert("GAME OVER");
-    }, 20);
+
+    document.getElementById("gameOverScore").innerText = "Pontuação Final: " + score; // MOSTRAR SCORE NA BOX
+
+    document.getElementById("gameOverModal").style.display = "flex"; 
 }
 
 function adicionarDois(){
@@ -105,9 +147,9 @@ function adicionarDois(){
             let peca = document.getElementById(l.toString() + "-" + c.toString());
             atualizarPeca(peca, valor);
 
-            peca.classList.add("peca-spawn");
+            peca.classList.add("peca-spawn-pop");
             setTimeout(() => {
-                peca.classList.remove("peca-spawn");
+                peca.classList.remove("peca-spawn-pop");
             }, 200);
             
             found = true;
@@ -139,14 +181,6 @@ function atualizarPeca(peca, num, animarMerge = false){
             peca.style.fontSize = "35px";
         }
 
-        // animação de merge (opcional)
-        if (animarMerge && num > parseInt(textoAnterior || 0)) {
-            peca.classList.add("merge");
-            setTimeout(() => {
-                peca.classList.remove("merge");
-            }, 200);
-        }
-
     } else {
         // peça vazia: garantir estilo padrão
         peca.style.fontSize = "48px";
@@ -160,7 +194,6 @@ function animarMovimento(lOrig, cOrig, lDest, cDest) {
 
     if (!src || !src.innerText || src.innerText.trim() === "") return;
 
-    // garantir que #tabuleiro é relativo
     if (getComputedStyle(board).position === "static") {
         board.style.position = "relative";
     }
@@ -204,7 +237,9 @@ function animarMovimento(lOrig, cOrig, lDest, cDest) {
 }
 
 document.addEventListener("keyup", (e) => {
-    if (gameOver) return; // jogo acabou = nao fazer mais movimentos
+    if (gameOver || bloqueado) return; // jogo acabou = nao fazer mais movimentos
+
+    bloqueado = true;
 
     // SALVAR GRID ANTES DE QUALQUER MOVIMENTO
     let gridAnterior = copiarGrid(tabuleiro);
@@ -231,11 +266,21 @@ document.addEventListener("keyup", (e) => {
     if (!movimentoValido) {
         historico.pop();
         historicoScore.pop();
+        bloqueado = false;
         return;
     }
 
+    somSlide.currentTime = 0;
+    somSlide.playbackRate = 0.85 + Math.random() * 0.30;
+    somSlide.play();
+
     setTimeout(() => {
         adicionarDois();
+
+        setTimeout(() => {
+            bloqueado = false;
+        }, 220);
+
         document.getElementById("score").innerText = score;
 
         if (!temPecaVazia() && !temMovimentoPossivel()){
@@ -244,27 +289,42 @@ document.addEventListener("keyup", (e) => {
     }, ANIMACAO_MS);
 });
 
+function pegarDetuneMerge(valor) {
+    if (valor < 8) return 800;   // bem agudo
+    if (valor < 32) return 400;
+    if (valor < 128) return 0;   // neutro
+    if (valor < 512) return -300;
+    return -600;                 // grave
+}
+
+
 function filtrarZeros(linha) {
     return linha.filter(num => num != 0); // cria nova array sem 0s
 }
 
 function mover(linha) {
-    // lista dos itens não-zero com seu índice original
     let items = [];
     for (let i = 0; i < linha.length; i++) {
         if (linha[i] !== 0) items.push({ value: linha[i], index: i });
     }
 
-    // resultado temporário com informações de merges e fontes
     let resultSlots = [];
     let i = 0;
     while (i < items.length) {
         if (i + 1 < items.length && items[i].value === items[i + 1].value) {
+            
+            tocarSom(
+                somPopBuffer,
+                pegarDetuneMerge(items[i].value),
+                0.2
+            );
+
             // merge
             let mergedValue = items[i].value * 2;
             resultSlots.push({ value: mergedValue, sources: [items[i].index, items[i + 1].index] });
             score += mergedValue; // só adicionar score quando houver merge
             i += 2;
+
         } else {
             // apenas mover
             resultSlots.push({ value: items[i].value, sources: [items[i].index] });
@@ -272,9 +332,8 @@ function mover(linha) {
         }
     }
 
-    // construir a linha final de números e os movimentos por índice
     let linhaFinal = [];
-    let movimentos = []; // { de: índiceOrigem, para: índiceDestino }
+    let movimentos = [];
     for (let k = 0; k < resultSlots.length; k++) {
         linhaFinal.push(resultSlots[k].value);
         resultSlots[k].sources.forEach(srcIndex => {
@@ -299,7 +358,6 @@ function moverEsquerda() {
             houveMovimento = true;
         }
 
-        // animar antes de atualizar
         movimentos.forEach(m => {
             animarMovimento(l, m.de, l, m.para);
         });
@@ -453,11 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-document.getElementById("resetBtn").addEventListener("click", () => {
-    iniciarJogo();
-});
-
-
 function refazerMovimento() {
     if (historico.length === 0) {
         return; // nada pra refazer
@@ -477,5 +530,33 @@ function refazerMovimento() {
 
     document.getElementById("score").innerText = score;
 }
+
+document.getElementById("btnNovoJogo").addEventListener("click", () => {
+    document.getElementById("gameOverModal").style.display = "none";
+    iniciarJogo();
+});
+
+// botões
+const botaoSom = document.getElementById("botaoSom");
+const iconeSom = document.getElementById("iconeSom");
+
+    let somAtivo = true;
+
+    botaoSom.addEventListener("click", () => {
+        somAtivo = !somAtivo;
+
+        somSlide.muted = !somAtivo;
+        somMerge.muted = !somAtivo;
+        document.querySelectorAll("audio").forEach(a => a.muted = !somAtivo);
+
+        if (somAtivo) audioCtx.resume();
+        else audioCtx.suspend();
+
+        iconeSom.classList.toggle("som-desligado", !somAtivo);
+});
+
 document.getElementById("redoBtn").addEventListener("click", refazerMovimento);
+document.getElementById("resetBtn").addEventListener("click", () => {
+    iniciarJogo();
+});
 
